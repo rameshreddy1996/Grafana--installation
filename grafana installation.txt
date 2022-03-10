@@ -1,13 +1,100 @@
+TOTAL PROMETHEUS AND GRAFANA SETUP
+
+Node_exporter Installation:
+==========================
+Amazon Linux 
+t2.micro
+port number -- 9100
+
+     wget https://github.com/prometheus/node_exporter/releases/download/v1.3.1/node_exporter-1.3.1.linux-amd64.tar.gz
+     tar -xzvf node_exporter-1.3.1.linux-amd64.tar.gz
+     ls
+     useradd -rs /bin/false nodeusr
+     mv node_exporter-1.3.1.linux-amd64/node_exporter /usr/local/bin/node_exporter
+     vim /etc/systemd/system/node_exporter.service 
+[Unit]
+Description=Node Exporter
+After=network.target
+[Service]
+User=nodeusr
+Group=nodeusr
+Type=simple
+ExecStart=/usr/local/bin/node_exporter
+[Install]
+WantedBy=multi-user.target
+
+     systemctl daemon-reload
+     systemctl start node_exporter
+     systemctl status node_exporter
+     systemctl enable node_exporter
+     curl http://localhost:9100/metrics
+
+
+Prometheus Installation:
+========================
+Amazon Linux 
+t2.micro
+port number -- 9090
+
+
+      yum update -y
+      amazon-linux-extras install java-openjdk11 -y
+      useradd -m -s /bin/bash prometheus
+      passwd -d prometheus
+      vi /etc/sudoers.d/90-cloud-init-users
+      cd /etc/systemd
+      chown -R prometheus:prometheus system
+      su - prometheus
+      wget https://github.com/prometheus/prometheus/releases/download/v2.33.3/prometheus-2.33.3.linux-amd64.tar.gz
+      ls
+      tar -xvf prometheus-2.33.3.linux-amd64.tar.gz
+      ls
+      mv prometheus-2.33.3.linux-amd64/ prometheus/
+      mkdir -p ~/prometheus/data
+      vi /etc/systemd/system/prometheus.service
+      
+
+[Unit]
+Description=Prometheus Server
+Documentation=https://prometheus.io/docs/introduction/overview/
+After=network-online.target
+
+[Service]
+User=prometheus
+Restart=on-failure
+
+#Change this line if you download the
+#Prometheus on different path user
+ExecStart=/home/prometheus/prometheus/prometheus \
+  --config.file=/home/prometheus/prometheus/prometheus.yml \
+  --storage.tsdb.path=/home/prometheus/prometheus/data
+
+[Install]
+WantedBy=multi-user.target
+
+     systemctl daemon-reload
+     systemctl enable prometheus
+     systemctl start prometheus
+     systemctl status prometheus
+
+--> configure prometheus.yml file to get connection 
+   between prometheus and node exporter
+   
+   /home/prometheus/prometheus/prometheus.yml
+
+ ---> give job name and targets
+     if it in same give machine "local" or different machine add private ip of node exporter
+    we can add multiple node exporters for prometheus
+
 Grafana Installation:
 ====================
 Amazon Linux 
 t2.micro
 port number -- 3000
 
-
-    1  sudo su -
-    2  sudo yum update -y
-    3  sudo nano /etc/yum.repos.d/grafana.repo  ---> Add the lines below
+      sudo su -
+      sudo yum update -y
+      sudo nano /etc/yum.repos.d/grafana.repo  ---> Add the lines below
 [grafana]
 name=grafana
 baseurl=https://packages.grafana.com/oss/rpm
@@ -17,11 +104,15 @@ gpgcheck=1
 gpgkey=https://packages.grafana.com/gpg.key
 sslverify=1
 sslcacert=/etc/pki/tls/certs/ca-bundle.crt
-
-to save use---> ctrl+s and to exit from text editor use--> press ctrl+x.
        
-    4  sudo yum install grafana
-    5  sudo systemctl daemon-reload
-    6  sudo systemctl start grafana-server
-    7  sudo systemctl status grafana-server
-    8  sudo systemctl enable grafana-server.service
+      sudo yum install grafana
+      sudo systemctl daemon-reload
+      sudo systemctl start grafana-server
+      sudo systemctl status grafana-server
+      sudo systemctl enable grafana-server.service
+
+Username : admin
+Passwd   : admin
+
+--> add prometheus url in the grafana ui 
+  then u get connection between prometheus and grafana
