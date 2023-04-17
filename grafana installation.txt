@@ -130,6 +130,9 @@ wget https://github.com/prometheus/prometheus/releases/download/v2.39.1/promethe
 tar -xf prometheus-2.39.1.linux-amd64.tar.gz
 cd prometheus-2.39.1.linux-amd64/
  ./prometheus
+ # start the process & service(software)
+ nohup ./prometheus &
+
   
 --------@# grafana 3023 insatallation @#---------------------
 
@@ -144,6 +147,12 @@ tar -xvzf grafana-9.2.1.linux-amd64.tar.gz
 chmod -R 755 grafana-9.2.1
 cd grafana-9.2.1/bin/
 nohup ./grafana-server & 
+
+## Go to grafana UI configaration
+  and take one datasorce 
+  confirue url
+  promethus url
+  http://privateip:9090
 
 
 
