@@ -144,3 +144,21 @@ tar -xvzf grafana-9.2.1.linux-amd64.tar.gz
 chmod -R 755 grafana-9.2.1
 cd grafana-9.2.1/bin/
 nohup ./grafana-server & 
+
+
+
+--------@# default node exprter 2023 insatallation @#---------------------
+
+ ########## for user data & sh file also ############
+ we install respective application ex: java(tomact),static(apache,httpd),python(flask)
+ 
+ ## There is respective exporters
+ ## tomcat node exporter,apache......etc
+ 
+ ## In this application secruity group we need allow promethues sg----------mandatory(otherwise we won't get jobs,metrics )
+ 
+ Wget wget https://github.com/prometheus/node_exporter/releases/download/v1.4.0-rc.0/node_exporter-1.4.0-rc.0.linux-amd64.tar.gz
+ tar -zvxf node_exporter-1.4.0-rc.0.linux-amd64.tar.gz
+ cd node_exporter-1.4.0-rc.0.linux-amd64/
+./node_exporter
+nohup ./node_exporter &
